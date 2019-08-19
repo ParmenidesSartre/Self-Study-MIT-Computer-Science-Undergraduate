@@ -1,7 +1,7 @@
 # Problem Set 2, hangman.py
-# Name: 
+# Name: Mohd Faizal Bin Azman
 # Collaborators:
-# Time spent:
+# Time spent: 4 hours
 
 # Hangman Game
 # -----------------------------------
@@ -203,7 +203,17 @@ def match_with_gaps(my_word, other_word):
         False otherwise: 
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    newWord = my_word.replace('_ ','_')
+    if len(newWord) == len(other_word):
+        for x,y  in zip(newWord,other_word):
+            if x != '_':
+                if x == y:
+                    continue
+                else:
+                    return False
+        return True
+    else:
+        return False
 
 
 
@@ -218,7 +228,14 @@ def show_possible_matches(my_word):
 
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    wordList = load_words()
+    words = []
+    for word in wordList:
+        if match_with_gaps(my_word, word):
+            words.append(word)
+    print('Possible words : ')
+    print()
+    return ' | '.join(words)
 
 
 
@@ -250,7 +267,59 @@ def hangman_with_hints(secret_word):
     Follows the other limitations detailed in the problem write-up.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    wordlist = load_words()
+    print('Welcome to the game Hangman!')
+    print('I am thinking of a word that is {} letters long.'.format(len(secret_word)))
+    print('-------------')
+    letters_guessed = []
+    guesses_remaining = 6
+    warnings_remaining = 3
+    
+    # Helper function
+    def is_valid(data):
+        for char in data:
+            if (char.isalpha()) | (char == '*'):
+                return True
+            else:
+                return False
+   
+    # Start the loops
+    while (is_word_guessed(secret_word,letters_guessed) != True):
+        print('You have {} guesses left'.format(guesses_remaining))
+        print('Available letters: {}'.format(get_available_letters(letters_guessed)))
+        data = input('Please guess a letter: ')
+        
+        if data == '*':
+            print(show_possible_matches(get_guessed_word(secret_word,letters_guessed)))
+        
+        # Check if letter input is valid
+        elif is_valid(data):
+            letters_guessed.append(data)
+            if data in secret_word:
+                print('Good guess: {}'.format(get_guessed_word(secret_word,letters_guessed)))
+            else:
+                print('Oops! That letter is not in my word: {}'.format(get_guessed_word(secret_word,letters_guessed)))
+                guesses_remaining -= 1
+            print('-------------')
+        else:
+            if warnings_remaining > 0:
+                print('Oops! That is not a valid input: {}'.format(get_guessed_word(secret_word,letters_guessed)))
+                warnings_remaining -= 1
+            else:
+                print('Oops! That is not a valid input: {}'.format(get_guessed_word(secret_word,letters_guessed)))
+                guesses_remaining -= 1
+            print('-------------')
+            
+        # break from while loop if guesses ran out 
+        if guesses_remaining == 0:
+            break
+                
+    # Closing output
+    if (is_word_guessed(secret_word,letters_guessed) == True):
+        print('Congratulations, you won!')
+        print('Your total score for this game: {}'.format(guesses_remaining * len(set(secret_word))))
+    else:
+        print('Sorry, you ran out of guesses. The word was {}.'.format(secret_word))
 
 
 
